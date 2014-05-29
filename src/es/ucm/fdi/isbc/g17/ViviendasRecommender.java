@@ -1,35 +1,40 @@
 package es.ucm.fdi.isbc.g17;
 
+import es.ucm.fdi.isbc.viviendas.ViviendasConnector;
 import es.ucm.fdi.isbc.viviendas.representacion.DescripcionVivienda;
+import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbraplications.StandardCBRApplication;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
+import jcolibri.cbrcore.Connector;
 import jcolibri.exception.ExecutionException;
 
 public final class ViviendasRecommender implements StandardCBRApplication {
+	
+	private Connector connector;
+	private CBRCaseBase caseBase;
+	
 
 	@Override
 	public void configure() throws ExecutionException {
-		// TODO Auto-generated method stub
-
+		connector = new ViviendasConnector();
+		caseBase = new LinealCaseBase();	
 	}
 
 	@Override
 	public CBRCaseBase preCycle() throws ExecutionException {
-		// TODO Auto-generated method stub
-		return null;
+		caseBase.init(connector);
+		return caseBase;
 	}
 
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void postCycle() throws ExecutionException {
-		// TODO Auto-generated method stub
-
+		caseBase.close();
 	}
 
 	public static void main(String[] args) {
