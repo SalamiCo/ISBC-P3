@@ -8,7 +8,7 @@ public class DescripcionVivienda implements CaseComponent{
 	public enum TipoVivienda {Atico, Plantabaja, Piso, Loft, Casaadosada, CasaChalet, Duplex, Estudio, Fincarustica, Apartamento}
 	public enum EstadoVivienda { Muybien, Reformado, Areformar, Casinuevo, Bien};
 		
-	EstadoVivienda e = EstadoVivienda.Muybien;
+	//EstadoVivienda e = EstadoVivienda.Muybien;
 	
 	Integer id;
 	
