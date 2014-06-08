@@ -87,11 +87,11 @@ public final class ViviendaPanel extends JPanel {
 
     private void updateInterface () {
         title.setText(description == null ? "" : String.valueOf(description.getTitulo()));
-        price.setText(description == null ? "" : String.valueOf(description.getPrecio()));
+        price.setText(description == null ? "" : String.valueOf(description.getPrecio()) + " €");
         rooms.setText(description == null ? "" : String.valueOf(description.getHabitaciones()));
         location.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
         bathrooms.setText(description == null ? "" : String.valueOf(description.getBanios()));
-        surface.setText(description == null ? "" : String.valueOf(description.getSuperficie()));
+        surface.setText(description == null ? "" : String.valueOf(description.getSuperficie())+ " m\u00B2");
         state.setText(description == null ? "" : String.valueOf(description.getEstado()));
     }
 }
