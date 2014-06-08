@@ -44,6 +44,8 @@ public final class MainFrame extends JFrame {
 	private JPanel panelOptions = new JPanel();
 	private JPanel panelResults = new JPanel();
 	
+	private ViviendaPanel results[] = {new ViviendaPanel(),new ViviendaPanel(),new ViviendaPanel(),new ViviendaPanel(),new ViviendaPanel()};
+	
 	private JComboBox comboVivienda = new JComboBox(TipoVivienda.values());
 	private JTextField textLocalidad = new JTextField();
 	private JSpinner spinHabitaciones = new JSpinner();
@@ -147,12 +149,14 @@ public final class MainFrame extends JFrame {
         	      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");           // rows
       	panelOptions.setLayout(layout3);      	
       	panelResults.setLayout(new BoxLayout(panelResults,BoxLayout.PAGE_AXIS));
+      	for(ViviendaPanel res:results){panelResults.add(res);}
       	
       	panel2.add(panelOptions, BorderLayout.WEST);
       	panel2.add(panelResults, BorderLayout.EAST);
     }
     
     private void showCases(Collection<CBRCase> cases){
+    	int i = 0;
     	Iterator it = cases.iterator();
     	while(it.hasNext()){
     		//get case
@@ -160,7 +164,8 @@ public final class MainFrame extends JFrame {
     		DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
     		
     		//create panel to display case
-    		panelResults.add(new ViviendaPanel(desc));
+    		results[i].setDescription(desc);
+    		i++;
     	}
     }
 
