@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import es.ucm.fdi.isbc.viviendas.representacion.DescripcionVivienda;
 
@@ -11,7 +15,7 @@ public final class ViviendaPanel extends JPanel {
 
     private DescripcionVivienda description;
 
-    private JLabel title;
+    private JLabel title, price, rooms;
 
     /**
      * Constructs a panel that shown no case.
@@ -47,14 +51,28 @@ public final class ViviendaPanel extends JPanel {
     private void setupInterface () {
         setLayout(new BorderLayout());
 
-        /* Label for the title */
         title = new JLabel();
-        add(title, BorderLayout.PAGE_START);
+        price = new JLabel();
+        rooms = new JLabel();
 
+        FormLayout layout = new FormLayout( //
+            "right:pref, 6dlu, left:pref", // columns
+            "pref, 3dlu, pref, 3dlu, pref"); // rows
+        CellConstraints cc = new CellConstraints();
+        setLayout(layout);
+
+        add(title, cc.xyw(1, 1, 3));
+
+        add(new JLabel("Precio"), cc.xy(1, 3));
+        add(new JTextField(), cc.xy(3, 3));
+
+        add(new JLabel("Habitaciones"), cc.xy(1, 5));
+        add(new JTextField(), cc.xy(3, 5));
     }
 
     private void updateInterface () {
         title.setText(description == null ? "" : description.getTitulo());
+        price.setText(description == null ? "" : description.getPrecio());
+        rooms.setText(description == null ? "" : description.getHabitaciones()());
     }
-
 }
