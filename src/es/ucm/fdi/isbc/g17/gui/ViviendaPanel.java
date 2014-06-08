@@ -2,6 +2,7 @@ package es.ucm.fdi.isbc.g17.gui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -59,7 +60,7 @@ public final class ViviendaPanel extends JPanel {
         surface = new JLabel();
         state = new JLabel();
         
-        button =new JButton();
+        button =new JButton("Ver");
 
         FormLayout layout = new FormLayout( //
             "right:pref, 6dlu, left:pref", // columns
