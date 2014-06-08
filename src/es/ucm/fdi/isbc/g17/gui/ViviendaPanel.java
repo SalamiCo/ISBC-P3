@@ -2,7 +2,6 @@ package es.ucm.fdi.isbc.g17.gui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -13,7 +12,6 @@ public final class ViviendaPanel extends JPanel {
     private DescripcionVivienda description;
 
     private JLabel title;
-    private JLabel image;
 
     /**
      * Constructs a panel that shown no case.
@@ -53,14 +51,10 @@ public final class ViviendaPanel extends JPanel {
         title = new JLabel();
         add(title, BorderLayout.PAGE_START);
 
-        /* Image for the house */
-        image = new JLabel();
-        add(title, BorderLayout.CENTER);
     }
 
     private void updateInterface () {
         title.setText(description == null ? "" : description.getTitulo());
-        image.setIcon(description == null ? null : new ImageIcon(description.getUrlFoto()));
     }
 
 }
