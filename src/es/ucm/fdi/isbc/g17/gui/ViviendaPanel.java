@@ -53,6 +53,9 @@ public final class ViviendaPanel extends JPanel {
         title = new JLabel();
         price = new JLabel();
         rooms = new JLabel();
+        bathrooms = new JLabel();
+        surface = new JLabel();
+        state = new JLabel();
 
         FormLayout layout = new FormLayout( //
             "right:pref, 6dlu, left:pref", // columns
