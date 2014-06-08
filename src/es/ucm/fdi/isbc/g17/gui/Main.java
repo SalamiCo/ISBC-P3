@@ -5,6 +5,8 @@ import java.awt.Frame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import es.ucm.fdi.isbc.g17.ViviendasRecommender;
+
 
 public final class Main {
 
@@ -31,7 +33,8 @@ public final class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run () {
-                final MainFrame frame = new MainFrame();
+            	ViviendasRecommender cbr = new ViviendasRecommender();
+                final MainFrame frame = new MainFrame(cbr);
                 frame.setLocationRelativeTo(null);
                 frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
                 frame.setVisible(true);
