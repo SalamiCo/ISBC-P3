@@ -25,7 +25,9 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 	
 	private Connector connector;
 	private CBRCaseBase caseBase;
+	private Collection<CBRCase> selectedCases;
 	
+	public Collection<CBRCase> getSelectedCases(){ return selectedCases;};
 
 	@Override
 	public void configure() throws ExecutionException {
@@ -57,10 +59,10 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 		Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
 		
 		// Select k cases
-		Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 5);
+		selectedCases = SelectCases.selectTopK(eval, 5);
 		
 		// Show result
-		DisplayCasesTableMethod.displayCasesInTableBasic(selectedcases);
+		//DisplayCasesTableMethod.displayCasesInTableBasic(selectedCases);
 		/*Compute a direct proportion between the "Duration" and "Price" attributes.
 		NumericDirectProportionMethod.directProportion(	new Attribute("Duration",DescripcionVivienda.class), 
 				 											new Attribute("price",DescripcionVivienda.class), 

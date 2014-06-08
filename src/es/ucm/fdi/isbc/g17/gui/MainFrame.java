@@ -2,9 +2,10 @@ package es.ucm.fdi.isbc.g17.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
 
@@ -107,7 +109,7 @@ public final class MainFrame extends JFrame {
  	            	CBRQuery query =  new CBRQuery();
  					query.setDescription(initialDescription);
  					recommender.cycle(query);
- 					
+ 					showCases(recommender.getSelectedCases());
  					//cambiar al siguiente panel
  					CardLayout cl = (CardLayout)(bgpanel.getLayout());
  				    cl.show(bgpanel, cards[1]);
@@ -148,6 +150,18 @@ public final class MainFrame extends JFrame {
       	
       	panel2.add(panelOptions, BorderLayout.WEST);
       	panel2.add(panelResults, BorderLayout.EAST);
+    }
+    
+    private void showCases(Collection<CBRCase> cases){
+    	Iterator it = cases.iterator();
+    	while(it.hasNext()){
+    		//get case
+    		CBRCase casoCBR =  (CBRCase) it.next();
+    		DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
+    		
+    		//create panel to display case
+    		panel2.add(new ViviendaPanel(desc));
+    	}
     }
 
 }
