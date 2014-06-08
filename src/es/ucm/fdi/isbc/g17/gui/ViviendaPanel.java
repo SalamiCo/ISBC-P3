@@ -15,7 +15,8 @@ public final class ViviendaPanel extends JPanel {
     private DescripcionVivienda description;
 
     private JLabel title, price, rooms, location, bathrooms, surface, state;
-
+    private JButton button;
+    
     /**
      * Constructs a panel that shown no case.
      */
@@ -57,10 +58,12 @@ public final class ViviendaPanel extends JPanel {
         bathrooms = new JLabel();
         surface = new JLabel();
         state = new JLabel();
+        
+        button =new JButton();
 
         FormLayout layout = new FormLayout( //
             "right:pref, 6dlu, left:pref", // columns
-            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
+            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
         CellConstraints cc = new CellConstraints();
         setLayout(layout);
 
@@ -83,6 +86,9 @@ public final class ViviendaPanel extends JPanel {
 
         add(new JLabel("Estado"), cc.xy(1, 13));
         add(state, cc.xy(3, 13));
+        
+        add(button, cc.xyw(1, 13, 3));
+        
     }
 
     private void updateInterface () {
