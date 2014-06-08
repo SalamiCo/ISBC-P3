@@ -61,6 +61,7 @@ public final class ViviendaPanel extends JPanel {
     private void updateInterface () {
         title.setText(description == null ? "" : description.getTitulo());
         image.setIcon(description == null ? null : new ImageIcon(description.getUrlFoto()));
+        System.out.println(description.getUrlFoto());
     }
 
 }
