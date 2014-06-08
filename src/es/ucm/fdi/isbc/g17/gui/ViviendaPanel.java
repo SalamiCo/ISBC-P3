@@ -2,6 +2,7 @@ package es.ucm.fdi.isbc.g17.gui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -15,7 +16,8 @@ public final class ViviendaPanel extends JPanel {
     private DescripcionVivienda description;
 
     private JLabel title, price, rooms, location, bathrooms, surface, state;
-
+    private JButton button;
+    
     /**
      * Constructs a panel that shown no case.
      */
@@ -57,10 +59,12 @@ public final class ViviendaPanel extends JPanel {
         bathrooms = new JLabel();
         surface = new JLabel();
         state = new JLabel();
+        
+        button =new JButton("Ver");
 
         FormLayout layout = new FormLayout( //
             "right:pref, 6dlu, left:pref", // columns
-            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
+            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
         CellConstraints cc = new CellConstraints();
         setLayout(layout);
 
@@ -83,15 +87,18 @@ public final class ViviendaPanel extends JPanel {
 
         add(new JLabel("Estado"), cc.xy(1, 13));
         add(state, cc.xy(3, 13));
+        
+        add(button, cc.xyw(1, 13, 3));
+        
     }
 
     private void updateInterface () {
         title.setText(description == null ? "" : String.valueOf(description.getTitulo()));
-        price.setText(description == null ? "" : String.valueOf(description.getPrecio()));
+        price.setText(description == null ? "" : String.valueOf(description.getPrecio()) + " €");
         rooms.setText(description == null ? "" : String.valueOf(description.getHabitaciones()));
         location.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
         bathrooms.setText(description == null ? "" : String.valueOf(description.getBanios()));
-        surface.setText(description == null ? "" : String.valueOf(description.getSuperficie()));
+        surface.setText(description == null ? "" : String.valueOf(description.getSuperficie())+ " m\u00B2");
         state.setText(description == null ? "" : String.valueOf(description.getEstado()));
     }
 }
