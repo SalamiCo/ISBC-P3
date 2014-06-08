@@ -90,7 +90,6 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 	}
 
 	public static void main(String[] args) {
-
 		ViviendasRecommender recommender = new ViviendasRecommender();
 		//recommender.showMainFrame();
 		try {
