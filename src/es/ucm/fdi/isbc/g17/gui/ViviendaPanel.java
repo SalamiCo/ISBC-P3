@@ -60,7 +60,7 @@ public final class ViviendaPanel extends JPanel {
 
         FormLayout layout = new FormLayout( //
             "right:pref, 6dlu, left:pref", // columns
-            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
+            "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"); // rows
         CellConstraints cc = new CellConstraints();
         setLayout(layout);
 
