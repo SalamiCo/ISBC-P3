@@ -53,6 +53,7 @@ public final class ViviendaPanel extends JPanel {
         title = new JLabel();
         price = new JLabel();
         rooms = new JLabel();
+        location = new JLabel();
         bathrooms = new JLabel();
         surface = new JLabel();
         state = new JLabel();
