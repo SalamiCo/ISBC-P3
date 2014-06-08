@@ -90,8 +90,8 @@ public final class ViviendaPanel extends JPanel {
         price.setText(description == null ? "" : String.valueOf(description.getPrecio()));
         rooms.setText(description == null ? "" : String.valueOf(description.getHabitaciones()));
         location.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
-        bathrooms.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
-        surface.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
-        state.setText(description == null ? "" : String.valueOf(description.getLocalizacion()));
+        bathrooms.setText(description == null ? "" : String.valueOf(description.getBanios()));
+        surface.setText(description == null ? "" : String.valueOf(description.getSuperficie()));
+        state.setText(description == null ? "" : String.valueOf(description.getEstado()));
     }
 }
