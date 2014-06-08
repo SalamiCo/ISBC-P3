@@ -160,7 +160,7 @@ public final class MainFrame extends JFrame {
     		DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
     		
     		//create panel to display case
-    		panel2.add(new ViviendaPanel(desc));
+    		panelResults.add(new ViviendaPanel(desc));
     	}
     }
 
