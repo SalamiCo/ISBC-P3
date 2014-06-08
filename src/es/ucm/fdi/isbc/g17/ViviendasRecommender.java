@@ -99,7 +99,7 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 			boolean cont = true;
 			while (cont) {
 				DescripcionVivienda desc = new DescripcionVivienda(0);
-				desc.setPrecio(100000);
+				desc.setPrecio(1000000000);
 				
 				CBRQuery query =  new CBRQuery();
 				query.setDescription(desc);
