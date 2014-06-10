@@ -1,6 +1,7 @@
 package es.ucm.fdi.isbc.viviendas;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,10 +43,12 @@ public class ViviendasConnector implements Connector {
     @Override
     public Collection<CBRCase> retrieveAllCases () {
         ArrayList<CBRCase> cases = new ArrayList<CBRCase>();
+        
         try {
             BufferedReader reader =
                 new BufferedReader(new InputStreamReader(Object.class.getResourceAsStream("/viviendas")));
             String line = null;
+            
             while ((line = reader.readLine()) != null) {
                 DescripcionVivienda vivienda = new DescripcionVivienda(line);
                 SolucionVivienda solucion = new SolucionVivienda();
@@ -56,13 +59,14 @@ public class ViviendasConnector implements Connector {
                 _case.setDescription(vivienda);
                 _case.setSolution(solucion);
                 cases.add(_case);
-
             }
+            
             reader.close();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        
         return cases;
     }
 

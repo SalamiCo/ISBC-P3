@@ -34,6 +34,7 @@ public final class Main {
             @Override
             public void run () {
             	ViviendasRecommender cbr = new ViviendasRecommender();
+            	
                 final MainFrame frame = new MainFrame(cbr);
                 frame.setLocationRelativeTo(null);
                 frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
