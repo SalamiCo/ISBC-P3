@@ -39,8 +39,6 @@ public final class MainFrame extends JFrame {
 
     private JPanel panelSearch;
     private JPanel panelFilter;
-
-    private JPanel panelOptions;
     private JPanel panelResults;
 
     private JTable tableResults;
@@ -149,6 +147,13 @@ public final class MainFrame extends JFrame {
     private JPanel setupResultsPanel () {
         JPanel panel = new JPanel();
 
+        tableResults = new JTable();
+
+        panel.add(new JScrollPane(tableResults));
+        return panel;
+    }
+
+    private void displayCases (Collection<CBRCase> cases) {
         tableModel = new DefaultTableModel(COLUMN_NAMES, 0) {
             private static final long serialVersionUID = -5522053746224748015L;
 
@@ -157,15 +162,8 @@ public final class MainFrame extends JFrame {
                 return false;
             }
         };
-
-        tableResults = new JTable();
         tableResults.setModel(tableModel);
 
-        panel.add(new JScrollPane(tableResults));
-        return panel;
-    }
-
-    private void displayCases (Collection<CBRCase> cases) {
         for (CBRCase casoCBR : cases) {
             DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
             tableModel.addRow(tableRow(desc));
@@ -198,9 +196,13 @@ public final class MainFrame extends JFrame {
 
     private void executeCbr () {
         try {
+            recommender.setNumberOfResults(15);
+            
             recommender.configure();
             recommender.preCycle();
+
             recommender.cycle(obtainQuery());
+
             displayCases(recommender.getSelectedCases());
             recommender.postCycle();
 

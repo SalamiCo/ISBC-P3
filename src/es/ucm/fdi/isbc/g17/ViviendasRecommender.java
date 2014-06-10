@@ -98,11 +98,19 @@ public final class ViviendasRecommender implements StandardCBRApplication {
         List<CBRCase> cases = new ArrayList<CBRCase>();
         
         int left = n;
-        for(Iterator<RetrievalResult> it = eval.iterator(); it.hasNext() && left > 0; left--) {
-            cases.add(it.next().get_case());
+        for(Iterator<RetrievalResult> it = eval.iterator(); it.hasNext() && left > 0;) {
+            CBRCase cbrCase = it.next().get_case();
+            if (filter(cbrCase)) {
+                cases.add(cbrCase);
+                left --;
+            }
         }
         
         return cases;
+    }
+    
+    private boolean filter (CBRCase cbrCase) {
+        return true;
     }
 
     @Override
