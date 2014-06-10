@@ -1,12 +1,8 @@
 package es.ucm.fdi.isbc.g17.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -15,11 +11,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableModel;
 
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
@@ -33,21 +32,19 @@ import es.ucm.fdi.isbc.viviendas.representacion.DescripcionVivienda;
 import es.ucm.fdi.isbc.viviendas.representacion.DescripcionVivienda.TipoVivienda;
 
 public final class MainFrame extends JFrame {
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 1L;
-    private final String[] cards = { "Card1", "Card2" };
+
+    private static final String[] COLUMN_NAMES = { "#", "Nombre", "Habitaciones", "Tamaño", "Precio" };
     private ViviendasRecommender recommender;
 
     private JPanel panelSearch;
     private JPanel panelFilter;
 
-    private JPanel panelOptions = new JPanel();
-    private JPanel panelResults = new JPanel();
+    private JPanel panelOptions;
+    private JPanel panelResults;
 
-    private ViviendaPanel results[] = { new ViviendaPanel(), new ViviendaPanel(), new ViviendaPanel(),
-            new ViviendaPanel(), new ViviendaPanel() };
+    private JTable tableResults;
+    private DefaultTableModel tableModel;
 
     private JComboBox comboVivienda = new JComboBox(TipoVivienda.values());
     private JTextField textLocalidad = new JTextField();
@@ -84,21 +81,21 @@ public final class MainFrame extends JFrame {
     private void setupContent () {
         panelSearch = setupSearchPanel();
         panelFilter = setupFilterPanel();
-        panelResults = new JPanel();
-        
+        panelResults = setupResultsPanel();
+
         // +---+---+
         // | A | B |
         // +---+---+
-        // |   C   |
+        // | C |
         // +-------+
         Box box_A_B = Box.createHorizontalBox();
         box_A_B.add(panelSearch);
         box_A_B.add(panelFilter);
-        
+
         Box box_AB_C = Box.createVerticalBox();
         box_AB_C.add(box_A_B);
         box_AB_C.add(panelResults);
-        
+
         box_AB_C.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         setContentPane(box_AB_C);
 
@@ -139,36 +136,51 @@ public final class MainFrame extends JFrame {
 
     private JPanel setupFilterPanel () {
         JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
 
         FormLayout layout = new FormLayout("right:pref, 6dlu, pref, 6dlu, pref", // columns
                 "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
-        panelOptions.setLayout(layout);
-        panelResults.setLayout(new GridLayout(2, 3));
-        for (ViviendaPanel res : results) {
-            panelResults.add(res);
-        }
+        panel.setLayout(layout);
 
-        panel.add(panelOptions, BorderLayout.WEST);
-        panel.add(panelResults, BorderLayout.EAST);
+        // TODO fill
 
         return panel;
     }
 
-    private void showCases (Collection<CBRCase> cases) {
-        int i = 0;
-        Iterator it = cases.iterator();
-        while (it.hasNext()) {
-            // get case
-            CBRCase casoCBR = (CBRCase) it.next();
+    private JPanel setupResultsPanel () {
+        JPanel panel = new JPanel();
+
+        tableModel = new DefaultTableModel(COLUMN_NAMES, 0) {
+            private static final long serialVersionUID = -5522053746224748015L;
+
+            @Override
+            public boolean isCellEditable (final int row, final int column) {
+                return false;
+            }
+        };
+
+        tableResults = new JTable();
+        tableResults.setModel(tableModel);
+
+        panel.add(new JScrollPane(tableResults));
+        return panel;
+    }
+
+    private void displayCases (Collection<CBRCase> cases) {
+        for (CBRCase casoCBR : cases) {
             DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
-
-            // create panel to display case
-            results[i].setDescription(desc);
-            i++;
+            tableModel.addRow(tableRow(desc));
         }
+    }
 
-        pack();
+    private Object[] tableRow (DescripcionVivienda desc) {
+        return new Object[] { //
+        /*    */desc.getId(), //
+                desc.getTitulo(), //
+                desc.getHabitaciones(), //
+                desc.getSuperficie() + " m²", //
+                desc.getPrecio() + " €" //
+        };
+
     }
 
     private CBRQuery obtainQuery () {
@@ -189,7 +201,7 @@ public final class MainFrame extends JFrame {
             recommender.configure();
             recommender.preCycle();
             recommender.cycle(obtainQuery());
-            showCases(recommender.getSelectedCases());
+            displayCases(recommender.getSelectedCases());
             recommender.postCycle();
 
         } catch (ExecutionException e) {
