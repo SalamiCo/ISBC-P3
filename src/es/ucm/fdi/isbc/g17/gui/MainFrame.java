@@ -48,6 +48,7 @@ public final class MainFrame extends JFrame {
     private JTextField textLocalidad = new JTextField();
     private JSpinner spinHabitaciones = new JSpinner();
     private JSpinner spinPrecio = new JSpinner();
+    private JSpinner spinResults = new JSpinner();
     private JButton buscarBtn = new JButton("Buscar");
 
     /**
@@ -113,21 +114,29 @@ public final class MainFrame extends JFrame {
         JPanel panel = new JPanel();
 
         FormLayout layout = new FormLayout("right:pref, 6dlu, pref, 4dlu, pref", // columns
-                "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
+                "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
         panel.setLayout(layout);
 
         CellConstraints cc = new CellConstraints();
+
         panel.add(new JLabel("Vivienda"), cc.xy(1, 1));
-        panel.add(comboVivienda, cc.xywh(3, 1, 3, 1));
+        panel.add(comboVivienda, cc.xyw(3, 1, 3));
+
         panel.add(new JLabel("Localidad"), cc.xy(1, 3));
         panel.add(textLocalidad, cc.xyw(3, 3, 3));
+
         panel.add(new JLabel("Habitaciones"), cc.xyw(1, 5, 1));
         spinHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
         panel.add(spinHabitaciones, cc.xyw(3, 5, 3));
+
         panel.add(new JLabel("Precio"), cc.xy(1, 7));
         spinPrecio.setModel(new SpinnerNumberModel(350000, 50000, 5000000, 100000));
-        panel.add(spinPrecio, cc.xy(3, 7));
-        panel.add(buscarBtn, cc.xy(5, 7));
+        panel.add(spinPrecio, cc.xyw(3, 7, 3));
+
+        panel.add(new JLabel("Nº Resultados"), cc.xy(1, 9));
+        panel.add(spinResults, cc.xy(3, 9));
+        spinResults.setModel(new SpinnerNumberModel(15, 1, 100, 5));
+        panel.add(buscarBtn, cc.xy(5, 9));
 
         return panel;
     }
@@ -196,8 +205,8 @@ public final class MainFrame extends JFrame {
 
     private void executeCbr () {
         try {
-            recommender.setNumberOfResults(15);
-            
+            recommender.setNumberOfResults(obtainNumberOfResults());
+
             recommender.configure();
             recommender.preCycle();
 
@@ -209,6 +218,10 @@ public final class MainFrame extends JFrame {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    private int obtainNumberOfResults () {
+        return ((Number) spinResults.getValue()).intValue();
     }
 
 }
