@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,9 +21,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import jcolibri.cbrcore.Attribute;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
+import jcolibri.method.retrieve.FilterBasedRetrieval.FilterConfig;
+import jcolibri.method.retrieve.FilterBasedRetrieval.predicates.Equal;
+import jcolibri.method.retrieve.FilterBasedRetrieval.predicates.Threshold;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -34,7 +39,7 @@ import es.ucm.fdi.isbc.viviendas.representacion.DescripcionVivienda.TipoVivienda
 public final class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    private static final String[] COLUMN_NAMES = { "#", "Nombre", "Habitaciones", "Tamaño", "Precio" };
+    private static final String[] COLUMN_NAMES = { "Título", "Tipo", "Habitaciones", "Tamaño", "Precio" };
     private ViviendasRecommender recommender;
 
     private JPanel panelSearch;
@@ -46,10 +51,18 @@ public final class MainFrame extends JFrame {
 
     private JComboBox comboVivienda = new JComboBox(TipoVivienda.values());
     private JTextField textLocalidad = new JTextField();
-    private JSpinner spinHabitaciones = new JSpinner();
-    private JSpinner spinPrecio = new JSpinner();
-    private JSpinner spinResults = new JSpinner();
+    private JSpinner spinHabitaciones;
+    private JSpinner spinPrecio;
+    private JSpinner spinResults;
     private JButton buscarBtn = new JButton("Buscar");
+    
+
+    private JSpinner spinMargenPrecio;
+    private JSpinner spinMargenHabitaciones;
+
+    private JCheckBox cboxFVivienda;
+    private JCheckBox cboxFHabitaciones;
+    private JCheckBox cboxFPrecio;
 
     /**
      * Creates an empty frame and fills it with the necessary components to
@@ -85,7 +98,7 @@ public final class MainFrame extends JFrame {
         // +---+---+
         // | A | B |
         // +---+---+
-        // | C |
+        // | ..C.. |
         // +-------+
         Box box_A_B = Box.createHorizontalBox();
         box_A_B.add(panelSearch);
@@ -113,7 +126,16 @@ public final class MainFrame extends JFrame {
     private JPanel setupSearchPanel () {
         JPanel panel = new JPanel();
 
-        FormLayout layout = new FormLayout("right:pref, 6dlu, pref, 4dlu, pref", // columns
+        spinHabitaciones = new JSpinner();
+        spinHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
+
+        spinPrecio = new JSpinner();
+        spinPrecio.setModel(new SpinnerNumberModel(350000, 50000, 5000000, 100000));
+
+        spinResults = new JSpinner();
+        spinResults.setModel(new SpinnerNumberModel(15, 1, 100, 5));
+
+        FormLayout layout = new FormLayout("right:pref, 4dlu, pref, 4dlu, pref", // columns
                 "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
         panel.setLayout(layout);
 
@@ -126,16 +148,13 @@ public final class MainFrame extends JFrame {
         panel.add(textLocalidad, cc.xyw(3, 3, 3));
 
         panel.add(new JLabel("Habitaciones"), cc.xyw(1, 5, 1));
-        spinHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
         panel.add(spinHabitaciones, cc.xyw(3, 5, 3));
 
         panel.add(new JLabel("Precio"), cc.xy(1, 7));
-        spinPrecio.setModel(new SpinnerNumberModel(350000, 50000, 5000000, 100000));
         panel.add(spinPrecio, cc.xyw(3, 7, 3));
 
         panel.add(new JLabel("Nº Resultados"), cc.xy(1, 9));
         panel.add(spinResults, cc.xy(3, 9));
-        spinResults.setModel(new SpinnerNumberModel(15, 1, 100, 5));
         panel.add(buscarBtn, cc.xy(5, 9));
 
         return panel;
@@ -144,12 +163,35 @@ public final class MainFrame extends JFrame {
     private JPanel setupFilterPanel () {
         JPanel panel = new JPanel();
 
-        FormLayout layout = new FormLayout("right:pref, 6dlu, pref, 6dlu, pref", // columns
+        cboxFVivienda = new JCheckBox();
+        cboxFHabitaciones = new JCheckBox();
+        cboxFPrecio = new JCheckBox();
+
+        spinMargenPrecio = new JSpinner();
+        spinMargenPrecio.setModel(new SpinnerNumberModel(50000, 1000, 1000000, 10000));
+        
+        spinMargenHabitaciones = new JSpinner();
+        spinMargenHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
+
+        FormLayout layout = new FormLayout("pref, 4dlu, left:pref, 4dlu, right:pref, 4dlu, pref", // columns
                 "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
         panel.setLayout(layout);
 
-        // TODO fill
+        CellConstraints cc = new CellConstraints();
 
+        panel.add(cboxFVivienda, cc.xy(1, 1));
+        panel.add(new JLabel("Filtrar por Tipo"), cc.xyw(3, 1, 3));
+
+        panel.add(cboxFHabitaciones, cc.xy(1, 3));
+        panel.add(new JLabel("Filtrar por Habitaciones"), cc.xy(3, 3));
+        panel.add(new JLabel("Margen:"), cc.xy(5, 3));
+        panel.add(spinMargenHabitaciones, cc.xy(7, 3));
+
+        panel.add(cboxFPrecio, cc.xy(1, 5));
+        panel.add(new JLabel("Filtrar por Precio"), cc.xy(3, 5));
+        panel.add(new JLabel("Margen:"), cc.xy(5, 5));
+        panel.add(spinMargenPrecio, cc.xy(7, 5));
+        
         return panel;
     }
 
@@ -181,8 +223,8 @@ public final class MainFrame extends JFrame {
 
     private Object[] tableRow (DescripcionVivienda desc) {
         return new Object[] { //
-        /*    */desc.getId(), //
-                desc.getTitulo(), //
+        /*    */desc.getTitulo(), //
+                desc.getTipo(), //
                 desc.getHabitaciones(), //
                 desc.getSuperficie() + " m²", //
                 desc.getPrecio() + " €" //
@@ -203,8 +245,32 @@ public final class MainFrame extends JFrame {
         return query;
     }
 
+    private FilterConfig obtainFilter () {
+        FilterConfig filter = new FilterConfig();
+
+        // Tipo de vivienda
+        if (cboxFVivienda.isSelected()) {
+            filter.addPredicate(new Attribute("tipo", DescripcionVivienda.class), new Equal());
+        }
+
+        // Habitaciones
+        if (cboxFHabitaciones.isSelected()) {
+            Number threshold = ((Number) spinMargenHabitaciones.getValue());
+            filter.addPredicate(new Attribute("habitaciones", DescripcionVivienda.class), new Threshold(threshold));
+        }
+
+        // Precio
+        if (cboxFPrecio.isSelected()) {
+            Number threshold = ((Number) spinMargenPrecio.getValue());
+            filter.addPredicate(new Attribute("precio", DescripcionVivienda.class), new Threshold(threshold));
+        }
+
+        return filter;
+    }
+
     private void executeCbr () {
         try {
+            recommender.setFilterConfig(obtainFilter());
             recommender.setNumberOfResults(obtainNumberOfResults());
 
             recommender.configure();

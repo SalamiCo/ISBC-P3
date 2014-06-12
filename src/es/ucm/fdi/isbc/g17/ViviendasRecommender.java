@@ -14,6 +14,8 @@ import jcolibri.cbrcore.CBRQuery;
 import jcolibri.cbrcore.Connector;
 import jcolibri.exception.ExecutionException;
 import jcolibri.method.retrieve.RetrievalResult;
+import jcolibri.method.retrieve.FilterBasedRetrieval.FilterBasedRetrievalMethod;
+import jcolibri.method.retrieve.FilterBasedRetrieval.FilterConfig;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
@@ -29,6 +31,7 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 
     private Collection<CBRCase> selectedCases;
     private int numberOfResults = 5;
+    private FilterConfig filterConfig;
 
     public Collection<CBRCase> getSelectedCases () {
         return selectedCases;
@@ -36,6 +39,10 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 
     public void setNumberOfResults (int n) {
         numberOfResults = n;
+    }
+
+    public void setFilterConfig (FilterConfig fc) {
+        this.filterConfig = fc;
     }
 
     @Override
@@ -65,7 +72,8 @@ public final class ViviendasRecommender implements StandardCBRApplication {
         simConfig.addMapping(new Attribute("precio", DescripcionVivienda.class), new Interval(20000));
 
         // Execute NN
-        Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
+        Collection<CBRCase> filtered = FilterBasedRetrievalMethod.filterCases(caseBase.getCases(), query, filterConfig);
+        Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(filtered, query, simConfig);
 
         // Select k cases
         selectedCases = selectAndFilter(eval, numberOfResults);
@@ -96,19 +104,19 @@ public final class ViviendasRecommender implements StandardCBRApplication {
 
     private Collection<CBRCase> selectAndFilter (Collection<RetrievalResult> eval, int n) {
         List<CBRCase> cases = new ArrayList<CBRCase>();
-        
+
         int left = n;
-        for(Iterator<RetrievalResult> it = eval.iterator(); it.hasNext() && left > 0;) {
+        for (Iterator<RetrievalResult> it = eval.iterator(); it.hasNext() && left > 0;) {
             CBRCase cbrCase = it.next().get_case();
             if (filter(cbrCase)) {
                 cases.add(cbrCase);
-                left --;
+                left--;
             }
         }
-        
+
         return cases;
     }
-    
+
     private boolean filter (CBRCase cbrCase) {
         return true;
     }
