@@ -87,13 +87,7 @@ public final class MainFrame extends JFrame {
         setTitle("Grupo 17 - ISBC");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        /* Schedule the GUI creation for later for greater responsivity */
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run () {
-                setupGui();
-            }
-        });
+        setupGui();
     }
 
     /* package */void setupGui () {
@@ -260,6 +254,7 @@ public final class MainFrame extends JFrame {
         JPanel panelButtons = new JPanel();
         panelButtons.setLayout(new BoxLayout(panelButtons, BoxLayout.LINE_AXIS));
 
+        /* Blacklist button */
         JButton buttonBlacklist = new JButton("Ignorar");
         buttonBlacklist.addActionListener(new ActionListener() {
             @Override
@@ -275,6 +270,7 @@ public final class MainFrame extends JFrame {
         });
         panelButtons.add(buttonBlacklist);
 
+        /* "Like"button */
         JButton buttonLike = new JButton("Me Gusta");
         buttonLike.addActionListener(new ActionListener() {
             @Override
@@ -284,6 +280,7 @@ public final class MainFrame extends JFrame {
         });
         panelButtons.add(buttonLike);
 
+        /* Close button */
         JButton buttonClose = new JButton("Cerrar");
         buttonClose.addActionListener(new ActionListener() {
             @Override
@@ -299,7 +296,6 @@ public final class MainFrame extends JFrame {
         dialog.setLocationRelativeTo(null);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setModal(true);
-        
 
         setEverythingEnabled(false);
         dialog.setVisible(true);
@@ -414,7 +410,7 @@ public final class MainFrame extends JFrame {
                 }
             }
         }
-        
+
         return components;
     }
 
