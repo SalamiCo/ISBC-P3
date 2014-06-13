@@ -289,8 +289,9 @@ public final class MainFrame extends JFrame {
 
         /* Details */
         JPanel details = new JPanel();
-        details.setLayout(new FormLayout("right:pref, 6dlu, left:pref",
-                "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref"));
+        details.setLayout(new FormLayout(
+                "right:pref, 6dlu, left:pref",
+                "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref"));
 
         CellConstraints cc = new CellConstraints();
 
@@ -319,8 +320,41 @@ public final class MainFrame extends JFrame {
         details.add(new JLabel("Precio:"), cc.xy(1, 13));
         details.add(new JLabel(desc.getPrecio() + " €"), cc.xy(3, 13));
 
-        details.add(new JLabel("Estado:"), cc.xy(1, 15));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 15));
+        JTextArea descriptionExBasicos = new JTextArea(desc.getExtrasBasicos().toString());
+        descriptionExBasicos.setEditable(false);
+        descriptionExBasicos.setColumns(40);
+        descriptionExBasicos.setLineWrap(true);
+        details.add(new JLabel("Extras (básicos):"), cc.xy(1, 15));
+        details.add(descriptionExBasicos, cc.xy(3, 15));
+
+        JTextArea descriptionExFinca = new JTextArea(desc.getExtrasFinca().toString());
+        descriptionExFinca.setEditable(false);
+        descriptionExFinca.setColumns(40);
+        descriptionExFinca.setLineWrap(true);
+        details.add(new JLabel("Extras (finca):"), cc.xy(1, 17));
+        details.add(descriptionExFinca, cc.xy(3, 17));
+
+        JTextArea descriptionExOtros = new JTextArea(desc.getExtrasOtros().toString());
+        descriptionExOtros.setEditable(false);
+        descriptionExOtros.setColumns(40);
+        descriptionExOtros.setLineWrap(true);
+        details.add(new JLabel("Extras (otros):"), cc.xy(1, 19));
+        details.add(descriptionExOtros, cc.xy(3, 19));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 21));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 21));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 23));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 23));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 25));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 25));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 27));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 27));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 29));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 29));
 
         // TODO More details
 
