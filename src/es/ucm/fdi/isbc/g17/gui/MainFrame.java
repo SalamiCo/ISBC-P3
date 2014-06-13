@@ -30,11 +30,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 
 import jcolibri.cbrcore.Attribute;
@@ -217,6 +216,8 @@ public final class MainFrame extends JFrame {
         panel.add(new JLabel("Margen:"), cc.xy(5, 5));
         panel.add(spinMargenPrecio, cc.xy(7, 5));
 
+        // TODO More filters
+
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filtros"));
         return panel;
     }
@@ -286,6 +287,45 @@ public final class MainFrame extends JFrame {
         JPanel panelButtons = new JPanel();
         panelButtons.setLayout(new BoxLayout(panelButtons, BoxLayout.LINE_AXIS));
 
+        /* Details */
+        JPanel details = new JPanel();
+        details.setLayout(new FormLayout("right:pref, 6dlu, left:pref",
+                "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref"));
+
+        CellConstraints cc = new CellConstraints();
+
+        details.add(new JLabel("Título:"), cc.xy(1, 1));
+        details.add(new JLabel(desc.getTitulo()), cc.xy(3, 1));
+
+        JTextArea descriptionArea = new JTextArea(desc.getDescripcion());
+        descriptionArea.setEditable(false);
+        descriptionArea.setColumns(40);
+        descriptionArea.setLineWrap(true);
+        details.add(new JLabel("Descripción:"), cc.xy(1, 3));
+        details.add(descriptionArea, cc.xy(3, 3));
+
+        details.add(new JLabel("Zona:"), cc.xy(1, 5));
+        details.add(new JLabel(desc.getLocalizacion()), cc.xy(3, 5));
+
+        details.add(new JLabel("Superficie:"), cc.xy(1, 7));
+        details.add(new JLabel(desc.getSuperficie() + " m²"), cc.xy(3, 7));
+
+        details.add(new JLabel("Habitaciones:"), cc.xy(1, 9));
+        details.add(new JLabel(desc.getHabitaciones().toString()), cc.xy(3, 9));
+
+        details.add(new JLabel("Baños:"), cc.xy(1, 11));
+        details.add(new JLabel(desc.getBanios().toString()), cc.xy(3, 11));
+
+        details.add(new JLabel("Precio:"), cc.xy(1, 13));
+        details.add(new JLabel(desc.getPrecio() + " €"), cc.xy(3, 13));
+
+        details.add(new JLabel("Estado:"), cc.xy(1, 15));
+        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 15));
+
+        // TODO More details
+
+        dialog.getContentPane().add(details, BorderLayout.CENTER);
+
         /* Blacklist button */
         JButton buttonBlacklist = new JButton("Ignorar");
         buttonBlacklist.addActionListener(new ActionListener() {
@@ -330,7 +370,7 @@ public final class MainFrame extends JFrame {
 
         dialog.pack();
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        
+
         return dialog;
     }
 
@@ -378,6 +418,8 @@ public final class MainFrame extends JFrame {
             Number threshold = ((Number) spinMargenPrecio.getValue());
             filter.addPredicate(new Attribute("precio", DescripcionVivienda.class), new Threshold(threshold));
         }
+
+        // TODO Apply filters
 
         return filter;
     }
