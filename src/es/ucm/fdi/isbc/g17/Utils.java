@@ -11,12 +11,15 @@ public final class Utils {
 
     public static String toHumanReadable (String string) {
         String[] pieces = string.split("\\b+");
-        
+
         StringBuilder sb = new StringBuilder();
         for (String piece : pieces) {
-            sb.append(' ').append(Character.toUpperCase(piece.charAt(0))).append(string.substring(1).toLowerCase());
+            piece = piece.trim();
+            if (!piece.isEmpty()) {
+                sb.append(' ').append(Character.toUpperCase(piece.charAt(0))).append(piece.substring(1).toLowerCase());
+            }
         }
-        
+
         return sb.toString().trim();
     }
 
