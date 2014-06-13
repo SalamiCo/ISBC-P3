@@ -2,8 +2,10 @@ package es.ucm.fdi.isbc.g17;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbraplications.StandardCBRApplication;
@@ -33,6 +35,8 @@ public final class ViviendasRecommender implements StandardCBRApplication {
     private int numberOfResults = 5;
     private FilterConfig filterConfig;
 
+    private Collection<Integer> blacklist = new HashSet<Integer>();
+
     public Collection<CBRCase> getSelectedCases () {
         return selectedCases;
     }
@@ -45,15 +49,30 @@ public final class ViviendasRecommender implements StandardCBRApplication {
         this.filterConfig = fc;
     }
 
+    public void blacklist (Integer id) {
+        blacklist.add(id);
+    }
+
     @Override
     public void configure () throws ExecutionException {
+        long timeAtStart = System.nanoTime();
         connector = new ViviendasConnector();
         caseBase = new LinealCaseBase();
+        long timeAtCreate =  System.nanoTime();
+        
+        double timeForCreate = (timeAtCreate - timeAtStart) / (double) TimeUnit.SECONDS.toNanos(1);
+        System.out.printf("%.3fs configure%n", timeForCreate);
     }
 
     @Override
     public CBRCaseBase preCycle () throws ExecutionException {
+        long timeAtStart = System.nanoTime();
         caseBase.init(connector);
+        long timeAtInit =  System.nanoTime();
+        
+        double timeForInit = (timeAtInit - timeAtStart) / (double) TimeUnit.SECONDS.toNanos(1);
+        System.out.printf("%.3fs pre-cycle%n", timeForInit);
+        
         return caseBase;
     }
 
@@ -72,8 +91,27 @@ public final class ViviendasRecommender implements StandardCBRApplication {
         simConfig.addMapping(new Attribute("precio", DescripcionVivienda.class), new Interval(20000));
 
         // Execute NN
-        Collection<CBRCase> filtered = FilterBasedRetrievalMethod.filterCases(caseBase.getCases(), query, filterConfig);
+        long timeAtStart = System.nanoTime();
+
+        Collection<CBRCase> casesWithoutBlacklistIds = new ArrayList<CBRCase>(caseBase.getCases());
+        for (Iterator<CBRCase> it = casesWithoutBlacklistIds.iterator(); it.hasNext();) {
+            CBRCase cbrCase = it.next();
+            DescripcionVivienda dv = (DescripcionVivienda) cbrCase.getDescription();
+            if (blacklist.contains(dv.getId())) {
+                it.remove();
+            }
+        }
+
+        long timeAtBlacklist = System.nanoTime();
+
+        Collection<CBRCase> filtered = FilterBasedRetrievalMethod.filterCases(casesWithoutBlacklistIds, query,
+                filterConfig);
+
+        long timeAtFilter = System.nanoTime();
+
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(filtered, query, simConfig);
+
+        long timeAtEval = System.nanoTime();
 
         // Select k cases
         selectedCases = selectAndFilter(eval, numberOfResults);
@@ -100,6 +138,14 @@ public final class ViviendasRecommender implements StandardCBRApplication {
          * retainDialog.setVisible(true); Collection<CBRCase> casesToRetain =
          * retainDialog.getCasestoRetain(); caseBase.learnCases(casesToRetain);
          */
+
+        double timeForBlacklist = (timeAtBlacklist - timeAtStart) / (double) TimeUnit.SECONDS.toNanos(1);
+        double timeForFilter = (timeAtFilter - timeAtBlacklist) / (double) TimeUnit.SECONDS.toNanos(1);
+        double timeForEval = (timeAtEval - timeAtFilter) / (double) TimeUnit.SECONDS.toNanos(1);
+        double timeForAll = (timeAtEval - timeAtStart) / (double) TimeUnit.SECONDS.toNanos(1);
+
+        System.out.printf("%.3fs retrieval (%.3fs blacklist + %.3fs filter + %.3fs search)%n", //
+                timeForAll, timeForBlacklist, timeForFilter, timeForEval);
     }
 
     private Collection<CBRCase> selectAndFilter (Collection<RetrievalResult> eval, int n) {

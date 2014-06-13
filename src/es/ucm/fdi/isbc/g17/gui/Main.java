@@ -1,7 +1,5 @@
 package es.ucm.fdi.isbc.g17.gui;
 
-import java.awt.Frame;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -37,7 +35,7 @@ public final class Main {
             	
                 final MainFrame frame = new MainFrame(cbr);
                 frame.setLocationRelativeTo(null);
-                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                //frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
                 frame.setVisible(true);
             }
         });

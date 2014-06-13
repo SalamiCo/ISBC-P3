@@ -2,7 +2,12 @@ package es.ucm.fdi.isbc.g17.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -41,6 +46,7 @@ public final class MainFrame extends JFrame {
 
     private static final String[] COLUMN_NAMES = { "Título", "Tipo", "Habitaciones", "Tamaño", "Precio" };
     private ViviendasRecommender recommender;
+    private List<CBRCase> results = Collections.emptyList();
 
     private JPanel panelSearch;
     private JPanel panelFilter;
@@ -55,7 +61,6 @@ public final class MainFrame extends JFrame {
     private JSpinner spinPrecio;
     private JSpinner spinResults;
     private JButton buscarBtn = new JButton("Buscar");
-    
 
     private JSpinner spinMargenPrecio;
     private JSpinner spinMargenHabitaciones;
@@ -169,7 +174,7 @@ public final class MainFrame extends JFrame {
 
         spinMargenPrecio = new JSpinner();
         spinMargenPrecio.setModel(new SpinnerNumberModel(50000, 1000, 1000000, 10000));
-        
+
         spinMargenHabitaciones = new JSpinner();
         spinMargenHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
 
@@ -191,20 +196,36 @@ public final class MainFrame extends JFrame {
         panel.add(new JLabel("Filtrar por Precio"), cc.xy(3, 5));
         panel.add(new JLabel("Margen:"), cc.xy(5, 5));
         panel.add(spinMargenPrecio, cc.xy(7, 5));
-        
+
         return panel;
     }
 
     private JPanel setupResultsPanel () {
-        JPanel panel = new JPanel();
+        Box box = Box.createVerticalBox();
 
         tableResults = new JTable();
+        tableResults.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked (final MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    final JTable target = (JTable) e.getSource();
+                    final int row = target.getSelectedRow();
+                    showDetails(results.get(row));
+                }
+            }
+        });
 
-        panel.add(new JScrollPane(tableResults));
+        box.add(new JLabel("Doble Click en una fila para ver detalles de un piso"));
+        box.add(new JScrollPane(tableResults));
+
+        JPanel panel = new JPanel();
+        panel.add(box);
         return panel;
     }
 
     private void displayCases (Collection<CBRCase> cases) {
+        results = Collections.unmodifiableList(new ArrayList<CBRCase>(cases));
+
         tableModel = new DefaultTableModel(COLUMN_NAMES, 0) {
             private static final long serialVersionUID = -5522053746224748015L;
 
@@ -215,10 +236,15 @@ public final class MainFrame extends JFrame {
         };
         tableResults.setModel(tableModel);
 
-        for (CBRCase casoCBR : cases) {
+        for (CBRCase casoCBR : results) {
             DescripcionVivienda desc = (DescripcionVivienda) casoCBR.getDescription();
             tableModel.addRow(tableRow(desc));
         }
+
+    }
+
+    /* package */void showDetails (CBRCase cbrCase) {
+        System.out.println(cbrCase);
     }
 
     private Object[] tableRow (DescripcionVivienda desc) {
@@ -270,6 +296,8 @@ public final class MainFrame extends JFrame {
 
     private void executeCbr () {
         try {
+            System.out.println("---");
+            
             recommender.setFilterConfig(obtainFilter());
             recommender.setNumberOfResults(obtainNumberOfResults());
 
