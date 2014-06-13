@@ -1,21 +1,29 @@
 package es.ucm.fdi.isbc.g17.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -23,13 +31,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
 import jcolibri.cbrcore.Attribute;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
-import jcolibri.exception.ExecutionException;
 import jcolibri.method.retrieve.FilterBasedRetrieval.FilterConfig;
 import jcolibri.method.retrieve.FilterBasedRetrieval.predicates.Equal;
 import jcolibri.method.retrieve.FilterBasedRetrieval.predicates.Threshold;
@@ -123,7 +131,7 @@ public final class MainFrame extends JFrame {
         buscarBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (final ActionEvent arg0) {
-                executeCbr();
+                performSearch();
             }
         });
     }
@@ -244,7 +252,59 @@ public final class MainFrame extends JFrame {
     }
 
     /* package */void showDetails (CBRCase cbrCase) {
-        System.out.println(cbrCase);
+        final DescripcionVivienda desc = (DescripcionVivienda) cbrCase.getDescription();
+
+        final JDialog dialog = new JDialog();
+        dialog.getContentPane().setLayout(new BorderLayout());
+
+        JPanel panelButtons = new JPanel();
+        panelButtons.setLayout(new BoxLayout(panelButtons, BoxLayout.LINE_AXIS));
+
+        JButton buttonBlacklist = new JButton("Ignorar");
+        buttonBlacklist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(dialog,
+                        "Este piso no se volverá a mostrar en ninguna búsqueda\n¿Estás seguro?", "Confirmación",
+                        JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    recommender.blacklist(desc.getId());
+                    dialog.dispose();
+                }
+            }
+        });
+        panelButtons.add(buttonBlacklist);
+
+        JButton buttonLike = new JButton("Me Gusta");
+        buttonLike.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        panelButtons.add(buttonLike);
+
+        JButton buttonClose = new JButton("Cerrar");
+        buttonClose.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        panelButtons.add(buttonClose);
+
+        dialog.add(panelButtons, BorderLayout.PAGE_END);
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setModal(true);
+        
+
+        setEverythingEnabled(false);
+        dialog.setVisible(true);
+
+        performSearch();
     }
 
     private Object[] tableRow (DescripcionVivienda desc) {
@@ -294,24 +354,68 @@ public final class MainFrame extends JFrame {
         return filter;
     }
 
-    private void executeCbr () {
-        try {
-            System.out.println("---");
-            
-            recommender.setFilterConfig(obtainFilter());
-            recommender.setNumberOfResults(obtainNumberOfResults());
+    private void performSearch () {
+        searchStarted();
 
-            recommender.configure();
-            recommender.preCycle();
+        SwingWorker<?, ?> worker = new SwingWorker<Void, Void>() {
 
-            recommender.cycle(obtainQuery());
+            @Override
+            protected Void doInBackground () throws Exception {
+                recommender.setFilterConfig(obtainFilter());
+                recommender.setNumberOfResults(obtainNumberOfResults());
 
-            displayCases(recommender.getSelectedCases());
-            recommender.postCycle();
+                recommender.configure();
+                recommender.preCycle();
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+                recommender.cycle(obtainQuery());
+
+                displayCases(recommender.getSelectedCases());
+                recommender.postCycle();
+
+                return null;
+            }
+
+            @Override
+            protected void done () {
+                searchEnded();
+            }
+        };
+
+        worker.execute();
+    }
+
+    private void searchStarted () {
+        setEverythingEnabled(false);
+    }
+
+    /* package */void searchEnded () {
+        setEverythingEnabled(true);
+    }
+
+    private void setEverythingEnabled (boolean enabled) {
+        for (Component comp : getAllChildren()) {
+            comp.setEnabled(enabled);
         }
+    }
+
+    private Collection<Component> getAllChildren () {
+        Collection<Component> components = new ArrayList<Component>();
+
+        Deque<Component> pending = new ArrayDeque<Component>();
+        pending.add(getContentPane());
+
+        while (!pending.isEmpty()) {
+            Component comp = pending.removeFirst();
+            components.add(comp);
+
+            if (comp instanceof Container) {
+                for (Component subComp : ((Container) comp).getComponents()) {
+                    pending.addLast(subComp);
+                }
+            }
+        }
+        
+        return components;
     }
 
     private int obtainNumberOfResults () {
