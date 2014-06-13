@@ -63,15 +63,15 @@ public class ExtrasBasicos implements CaseComponent {
                 + sincon("muebles", amueblado, true) //
                 + sincon("cocina office", cocinaOffice, true) + "\n"//
                 + sincon("parquet", parquet, true) //
-                + sincon("domotica", domotica, true) //
+                + sincon("domótica", domotica, true) //
                 + sincon("armarios", armarios, true) + "\n"//
                 + sincon("tv", tv, true) //
                 + sincon("lavadora", lavadora, true) //
-                + sincon("electrodomesticos", electrodomesticos, true) + "\n"//
+                + sincon("electrodomésticos", electrodomesticos, true) + "\n"//
                 + sincon("suite con baño", suiteConBanio, true) //
-                + sincon("puerta blindada", puertaBlindada, true) //
-                + sincon("gres ceramica", gresCeramica, true) + "\n"//
-                + sincon("calefaccion", calefaccion, true) //
+                + sincon("puerta blindada", puertaBlindada, true) + "\n" //
+                + sincon("gres cerámica", gresCeramica, true) //
+                + sincon("calefacción", calefaccion, true) //
                 + sincon("aire acondicionado", aireAcondicionado, true) //
                 + sincon("nevera", nevera, false);
     }

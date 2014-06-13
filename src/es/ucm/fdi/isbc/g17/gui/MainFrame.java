@@ -275,6 +275,7 @@ public final class MainFrame extends JFrame {
         dialog.setModal(true);
 
         setEverythingEnabled(false);
+        dialog.pack();
         dialog.setVisible(true);
 
         performSearch();
@@ -289,9 +290,11 @@ public final class MainFrame extends JFrame {
 
         /* Details */
         JPanel details = new JPanel();
+        details.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        
         details.setLayout(new FormLayout(
                 "right:pref, 6dlu, left:pref",
-                "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref"));
+                "pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 30dlu"));
 
         CellConstraints cc = new CellConstraints();
 
@@ -300,63 +303,49 @@ public final class MainFrame extends JFrame {
 
         JTextArea descriptionArea = new JTextArea(desc.getDescripcion());
         descriptionArea.setEditable(false);
-        descriptionArea.setColumns(40);
+        descriptionArea.setColumns(50);
         descriptionArea.setLineWrap(true);
         details.add(new JLabel("Descripción:"), cc.xy(1, 3));
         details.add(descriptionArea, cc.xy(3, 3));
+        
+        details.add(new JLabel("Tipo:"), cc.xy(1, 5));
+        details.add(new JLabel(desc.getTipo().toString()), cc.xy(3, 5));
 
-        details.add(new JLabel("Zona:"), cc.xy(1, 5));
-        details.add(new JLabel(desc.getLocalizacion()), cc.xy(3, 5));
+        details.add(new JLabel("Zona:"), cc.xy(1, 7));
+        details.add(new JLabel(desc.getLocalizacion()), cc.xy(3, 7));
 
-        details.add(new JLabel("Superficie:"), cc.xy(1, 7));
-        details.add(new JLabel(desc.getSuperficie() + " m²"), cc.xy(3, 7));
+        details.add(new JLabel("Superficie:"), cc.xy(1, 9));
+        details.add(new JLabel(desc.getSuperficie() + " m²"), cc.xy(3, 9));
 
-        details.add(new JLabel("Habitaciones:"), cc.xy(1, 9));
-        details.add(new JLabel(desc.getHabitaciones().toString()), cc.xy(3, 9));
+        details.add(new JLabel("Habitaciones:"), cc.xy(1, 11));
+        details.add(new JLabel(desc.getHabitaciones().toString()), cc.xy(3, 11));
 
-        details.add(new JLabel("Baños:"), cc.xy(1, 11));
-        details.add(new JLabel(desc.getBanios().toString()), cc.xy(3, 11));
+        details.add(new JLabel("Baños:"), cc.xy(1, 13));
+        details.add(new JLabel(desc.getBanios().toString()), cc.xy(3, 13));
 
-        details.add(new JLabel("Precio:"), cc.xy(1, 13));
-        details.add(new JLabel(desc.getPrecio() + " €"), cc.xy(3, 13));
+        details.add(new JLabel("Precio:"), cc.xy(1, 15));
+        details.add(new JLabel(desc.getPrecio() + " €"), cc.xy(3, 15));
 
         JTextArea descriptionExBasicos = new JTextArea(desc.getExtrasBasicos().toString());
         descriptionExBasicos.setEditable(false);
-        descriptionExBasicos.setColumns(40);
+        descriptionExBasicos.setColumns(50);
         descriptionExBasicos.setLineWrap(true);
-        details.add(new JLabel("Extras (básicos):"), cc.xy(1, 15));
-        details.add(descriptionExBasicos, cc.xy(3, 15));
+        details.add(new JLabel("Extras (básicos):"), cc.xy(1, 17));
+        details.add(descriptionExBasicos, cc.xy(3, 17));
 
         JTextArea descriptionExFinca = new JTextArea(desc.getExtrasFinca().toString());
         descriptionExFinca.setEditable(false);
-        descriptionExFinca.setColumns(40);
+        descriptionExFinca.setColumns(50);
         descriptionExFinca.setLineWrap(true);
-        details.add(new JLabel("Extras (finca):"), cc.xy(1, 17));
-        details.add(descriptionExFinca, cc.xy(3, 17));
+        details.add(new JLabel("Extras (finca):"), cc.xy(1, 19));
+        details.add(descriptionExFinca, cc.xy(3, 19));
 
         JTextArea descriptionExOtros = new JTextArea(desc.getExtrasOtros().toString());
         descriptionExOtros.setEditable(false);
-        descriptionExOtros.setColumns(40);
+        descriptionExOtros.setColumns(50);
         descriptionExOtros.setLineWrap(true);
-        details.add(new JLabel("Extras (otros):"), cc.xy(1, 19));
-        details.add(descriptionExOtros, cc.xy(3, 19));
-
-        details.add(new JLabel("Estado:"), cc.xy(1, 21));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 21));
-
-        details.add(new JLabel("Estado:"), cc.xy(1, 23));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 23));
-
-        details.add(new JLabel("Estado:"), cc.xy(1, 25));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 25));
-
-        details.add(new JLabel("Estado:"), cc.xy(1, 27));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 27));
-
-        details.add(new JLabel("Estado:"), cc.xy(1, 29));
-        details.add(new JLabel(desc.getEstado().toString()), cc.xy(3, 29));
-
-        // TODO More details
+        details.add(new JLabel("Extras (otros):"), cc.xy(1, 21));
+        details.add(descriptionExOtros, cc.xy(3, 21));
 
         dialog.getContentPane().add(details, BorderLayout.CENTER);
 
