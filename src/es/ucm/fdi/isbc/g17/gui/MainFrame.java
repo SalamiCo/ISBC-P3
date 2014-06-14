@@ -452,6 +452,8 @@ public final class MainFrame extends JFrame {
                 comboZona.setSelectedItem(desc.getLocalizacion());
                 spinHabitaciones.setValue(desc.getHabitaciones());
                 spinPrecio.setValue(desc.getPrecio());
+                spinBanios.setValue(desc.getBanios());
+                spinSuperf.setValue(desc.getSuperficie());
                 dialog.dispose();
             }
         });
