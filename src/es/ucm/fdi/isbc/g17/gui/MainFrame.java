@@ -80,6 +80,24 @@ public final class MainFrame extends JFrame {
     private JCheckBox cboxFHabitaciones;
     private JCheckBox cboxFPrecio;
 
+    private JSpinner spinBanios;
+    private JCheckBox cboxFBanios;
+    private JSpinner spinMargenBanios;
+
+    private JSpinner spinSuperf;
+
+    private JSpinner spinMargenSuperf;
+
+    private JCheckBox cboxFSuperf;
+
+    private JLabel labelMargenHabitaciones;
+
+    private JLabel labelMargenBanios;
+
+    private JLabel labelMargenPrecio;
+
+    private JLabel labelMargenSuperf;
+
     public MainFrame (ViviendasRecommender cbr) throws ExecutionException {
         recommender = cbr;
         recommender.configure();
@@ -94,8 +112,26 @@ public final class MainFrame extends JFrame {
     /* package */void setupGui (CBRCaseBase cases) {
         setupContent(cases);
         setupListeners();
+        updateGui();
+        
         pack();
         setLocationRelativeTo(null);
+    }
+
+    private void updateGui () {
+        spinBanios.setEnabled(cboxFBanios.isSelected());
+        spinMargenBanios.setEnabled(cboxFBanios.isSelected());
+        labelMargenBanios.setEnabled(cboxFBanios.isSelected());
+
+        spinSuperf.setEnabled(cboxFSuperf.isSelected());
+        spinMargenSuperf.setEnabled(cboxFSuperf.isSelected());
+        labelMargenSuperf.setEnabled(cboxFSuperf.isSelected());
+
+        spinMargenHabitaciones.setEnabled(cboxFHabitaciones.isSelected());
+        labelMargenHabitaciones.setEnabled(cboxFHabitaciones.isSelected());
+        
+        spinMargenPrecio.setEnabled(cboxFPrecio.isSelected());
+        labelMargenPrecio.setEnabled(cboxFPrecio.isSelected());
     }
 
     private void setupContent (CBRCaseBase cases) {
@@ -129,6 +165,19 @@ public final class MainFrame extends JFrame {
                 performSearch();
             }
         });
+        
+        ActionListener checkBoxListener = new ActionListener() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                updateGui();
+            }
+        };
+
+        cboxFBanios.addActionListener(checkBoxListener);
+        cboxFHabitaciones.addActionListener(checkBoxListener);
+        cboxFPrecio.addActionListener(checkBoxListener);
+        cboxFSuperf.addActionListener(checkBoxListener);
+        cboxFVivienda.addActionListener(checkBoxListener);
     }
 
     private JPanel setupSearchPanel (CBRCaseBase cases) {
@@ -189,7 +238,9 @@ public final class MainFrame extends JFrame {
 
         cboxFVivienda = new JCheckBox();
         cboxFHabitaciones = new JCheckBox();
+        cboxFBanios = new JCheckBox();
         cboxFPrecio = new JCheckBox();
+        cboxFSuperf = new JCheckBox();
 
         spinMargenPrecio = new JSpinner();
         spinMargenPrecio.setModel(new SpinnerNumberModel(50000, 1000, 1000000, 10000));
@@ -197,24 +248,52 @@ public final class MainFrame extends JFrame {
         spinMargenHabitaciones = new JSpinner();
         spinMargenHabitaciones.setModel(new SpinnerNumberModel(1, 1, 10, 1));
 
-        FormLayout layout = new FormLayout("pref, 4dlu, left:pref, 4dlu, right:pref, 4dlu, pref", // columns
-                "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
+        spinBanios = new JSpinner();
+        spinBanios.setModel(new SpinnerNumberModel(1, 1, 10, 1));
+        
+        spinMargenBanios = new JSpinner();
+        spinMargenBanios.setModel(new SpinnerNumberModel(1, 1, 10, 1));
+
+        spinSuperf = new JSpinner();
+        spinSuperf.setModel(new SpinnerNumberModel(80, 15, 800, 5));
+        
+        spinMargenSuperf = new JSpinner();
+        spinMargenSuperf.setModel(new SpinnerNumberModel(30, 5, 800, 5));
+
+        FormLayout layout = new FormLayout("pref, 4dlu, left:pref, 4dlu, left:pref, 4dlu, right:pref, 4dlu, pref", // columns
+                "pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref"); // rows
         panel.setLayout(layout);
 
         CellConstraints cc = new CellConstraints();
 
         panel.add(cboxFVivienda, cc.xy(1, 1));
-        panel.add(new JLabel("Filtrar por Tipo"), cc.xyw(3, 1, 3));
+        panel.add(new JLabel("Filtrar por Tipo"), cc.xyw(3, 1, 5));
 
+        labelMargenHabitaciones = new JLabel("Margen:");
         panel.add(cboxFHabitaciones, cc.xy(1, 3));
-        panel.add(new JLabel("Filtrar por Habitaciones"), cc.xy(3, 3));
-        panel.add(new JLabel("Margen:"), cc.xy(5, 3));
-        panel.add(spinMargenHabitaciones, cc.xy(7, 3));
+        panel.add(new JLabel("Filtrar por Habitaciones"), cc.xyw(3, 3, 3));
+        panel.add(labelMargenHabitaciones, cc.xy(7, 3));
+        panel.add(spinMargenHabitaciones, cc.xy(9, 3));
 
-        panel.add(cboxFPrecio, cc.xy(1, 5));
-        panel.add(new JLabel("Filtrar por Precio"), cc.xy(3, 5));
-        panel.add(new JLabel("Margen:"), cc.xy(5, 5));
-        panel.add(spinMargenPrecio, cc.xy(7, 5));
+        labelMargenBanios = new JLabel("Margen:");
+        panel.add(cboxFBanios, cc.xy(1, 5));
+        panel.add(new JLabel("Filtrar por Baños"), cc.xy(3, 5));
+        panel.add(spinBanios, cc.xy(5,  5));
+        panel.add(labelMargenBanios, cc.xy(7, 5));
+        panel.add(spinMargenBanios, cc.xy(9, 5));
+
+        labelMargenPrecio = new JLabel("Margen:");
+        panel.add(cboxFPrecio, cc.xy(1, 7));
+        panel.add(new JLabel("Filtrar por Precio"), cc.xyw(3, 7, 3));
+        panel.add(labelMargenPrecio, cc.xy(7, 7));
+        panel.add(spinMargenPrecio, cc.xy(9, 7));
+
+        labelMargenSuperf = new JLabel("Margen:");
+        panel.add(cboxFSuperf, cc.xy(1, 9));
+        panel.add(new JLabel("Filtrar por Superficie"), cc.xy(3, 9));
+        panel.add(spinSuperf, cc.xy(5,  9));
+        panel.add(labelMargenSuperf, cc.xy(7, 9));
+        panel.add(spinMargenSuperf, cc.xy(9, 9));
 
         // TODO More filters
 
@@ -268,7 +347,6 @@ public final class MainFrame extends JFrame {
 
     /* package */void showDetails (CBRCase cbrCase) {
         DescripcionVivienda desc = (DescripcionVivienda) cbrCase.getDescription();
-        System.out.println(desc);
 
         final JDialog dialog = createDetailsDialog(desc);
         dialog.setLocationRelativeTo(null);
@@ -291,7 +369,7 @@ public final class MainFrame extends JFrame {
         /* Details */
         JPanel details = new JPanel();
         details.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        
+
         details.setLayout(new FormLayout(
                 "right:pref, 6dlu, left:pref",
                 "pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 30dlu"));
@@ -307,7 +385,7 @@ public final class MainFrame extends JFrame {
         descriptionArea.setLineWrap(true);
         details.add(new JLabel("Descripción:"), cc.xy(1, 3));
         details.add(descriptionArea, cc.xy(3, 3));
-        
+
         details.add(new JLabel("Tipo:"), cc.xy(1, 5));
         details.add(new JLabel(desc.getTipo().toString()), cc.xy(3, 5));
 
@@ -415,6 +493,8 @@ public final class MainFrame extends JFrame {
         initialDescription.setLocalizacion(comboZona.getSelectedItem().toString());
         initialDescription.setHabitaciones(((Number) spinHabitaciones.getValue()).intValue());
         initialDescription.setPrecio(((Number) spinPrecio.getValue()).intValue());
+        initialDescription.setBanios(((Number) spinBanios.getValue()).intValue());
+        initialDescription.setSuperficie(((Number) spinSuperf.getValue()).intValue());
 
         CBRQuery query = new CBRQuery();
         query.setDescription(initialDescription);
@@ -436,10 +516,22 @@ public final class MainFrame extends JFrame {
             filter.addPredicate(new Attribute("habitaciones", DescripcionVivienda.class), new Threshold(threshold));
         }
 
+        // Baños
+        if (cboxFBanios.isSelected()) {
+            Number threshold = ((Number) spinMargenBanios.getValue());
+            filter.addPredicate(new Attribute("banios", DescripcionVivienda.class), new Threshold(threshold));
+        }
+
         // Precio
         if (cboxFPrecio.isSelected()) {
             Number threshold = ((Number) spinMargenPrecio.getValue());
             filter.addPredicate(new Attribute("precio", DescripcionVivienda.class), new Threshold(threshold));
+        }
+        
+        // Superficie
+        if (cboxFSuperf.isSelected()) {
+            Number threshold = ((Number) spinMargenSuperf.getValue());
+            filter.addPredicate(new Attribute("superficie", DescripcionVivienda.class), new Threshold(threshold));
         }
 
         // TODO Apply filters
@@ -474,11 +566,13 @@ public final class MainFrame extends JFrame {
     }
 
     private void searchStarted () {
+        updateGui();
         setEverythingEnabled(false);
     }
 
     /* package */void searchEnded () {
         setEverythingEnabled(true);
+        updateGui();
     }
 
     private void setEverythingEnabled (boolean enabled) {
