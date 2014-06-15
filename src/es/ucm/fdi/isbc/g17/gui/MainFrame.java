@@ -98,6 +98,8 @@ public final class MainFrame extends JFrame {
 
     private JLabel labelMargenSuperf;
 
+    private JCheckBox cboxFZona;
+
     public MainFrame (ViviendasRecommender cbr) throws ExecutionException {
         recommender = cbr;
         recommender.configure();
@@ -237,6 +239,7 @@ public final class MainFrame extends JFrame {
         JPanel panel = new JPanel();
 
         cboxFVivienda = new JCheckBox();
+        cboxFZona = new JCheckBox();
         cboxFHabitaciones = new JCheckBox();
         cboxFBanios = new JCheckBox();
         cboxFPrecio = new JCheckBox();
@@ -267,7 +270,10 @@ public final class MainFrame extends JFrame {
         CellConstraints cc = new CellConstraints();
 
         panel.add(cboxFVivienda, cc.xy(1, 1));
-        panel.add(new JLabel("Filtrar por Tipo"), cc.xyw(3, 1, 5));
+        panel.add(new JLabel("Filtrar por Tipo"), cc.xyw(3, 1, 3));
+        
+        panel.add(cboxFZona, cc.xy(7, 1));
+        panel.add(new JLabel("Filtrar por Zona"), cc.xy(9, 1));
 
         labelMargenHabitaciones = new JLabel("Margen:");
         panel.add(cboxFHabitaciones, cc.xy(1, 3));
@@ -294,8 +300,6 @@ public final class MainFrame extends JFrame {
         panel.add(spinSuperf, cc.xy(5,  9));
         panel.add(labelMargenSuperf, cc.xy(7, 9));
         panel.add(spinMargenSuperf, cc.xy(9, 9));
-
-        // TODO More filters
 
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filtros"));
         return panel;
@@ -510,6 +514,10 @@ public final class MainFrame extends JFrame {
         // Tipo de vivienda
         if (cboxFVivienda.isSelected()) {
             filter.addPredicate(new Attribute("tipo", DescripcionVivienda.class), new Equal());
+        }
+        
+        if (cboxFZona.isSelected()) {
+            filter.addPredicate(new Attribute("localizacion", DescripcionVivienda.class), new Equal());
         }
 
         // Habitaciones
